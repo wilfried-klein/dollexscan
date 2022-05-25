@@ -27,7 +27,8 @@ Un script MySQL est disponible pour créer rapidement une base de donnée
 
 # Configuration
 
-il faut également configurer divers variable dans le code ainsi qu'une base de donnée
+il faut également configurer divers variable dans le code
+(la description de celle ci étant en commmentaire)
 
 # Lancer
 
