@@ -95,7 +95,7 @@ BEGIN
     IF userExist = 0 THEN
         INSERT INTO messagescount VALUES(u,id,1);
     ELSE
-      UPDATE messagescount SET count = cout + 1 WHERE username = u AND streamid = id;
+      UPDATE messagescount SET count = count + 1 WHERE username = u AND streamid = id;
     END IF;
 END$$
 DELIMITER ;

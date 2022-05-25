@@ -72,7 +72,7 @@ console.log("connecté !!");
 irc.on('message', (channel, tags, message, self) => {
   if(self) return;
   //incrémente nombre de message seulement si en live
-  if(isOnline == false){
+  if(isOnline == true){
     //ajouter message au compteur
     sendMessageToDatabase(tags.username);
   }
@@ -99,7 +99,7 @@ async function isLive(){
   while(1){
     var date = new Date();
   //vérifie tout les 15s si la chaine est en live
-    if(date.getSeconds()%15 == 0 && second != date.getSeconds()){
+    if(date.getSeconds()%5 == 0 && second != date.getSeconds()){
       second = date.getSeconds();
       //demande à l'API les infos du stream
       const streams = await twitch.getStreams({ channel: `${parameters.tmi.channel}` });
