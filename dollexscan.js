@@ -98,7 +98,7 @@ async function isLive(){
   var second = 0;
   while(1){
     var date = new Date();
-  //vérifie tout les 15s si la chaine est en live
+  //vérifie tout les 5s si la chaine est en live
     if(date.getSeconds()%5 == 0 && second != date.getSeconds()){
       second = date.getSeconds();
       //demande à l'API les infos du stream
@@ -120,7 +120,7 @@ async function isLive(){
 }
 
 function sendMessageToDatabase(viewer){
-  var sql = mysql.format("CALL `update`(?,?)", [StreamID,viewer]);
+  var sql = mysql.format("CALL `update`(?,?)", [viewer,StreamID]);
   database.query(sql, function (error, results) {
     if (error) throw error;
   });
