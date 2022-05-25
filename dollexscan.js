@@ -150,7 +150,7 @@ function sendDollexbotToDatabase(message,username){
 }
 
 function addStreamToDataBase(streamName){
-  var sql = mysql.format("INSERT INTO streams VALUES (?,CURRENT_TIME,CURRENT_TIME,?)", [StreamID,startTimeStamp,streamName]);
+  var sql = mysql.format("INSERT INTO streams VALUES (?,CURRENT_TIME,CURRENT_TIME,?)", [StreamID,streamName]);
   database.query(sql, function (error, results) {
     if (error) throw error;
   });
