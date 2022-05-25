@@ -65,16 +65,18 @@ var isOnline = false;
 //id du stream
 var StreamID;
 
+console.log("connecté !!");
 //boucle si en live
 isLive();
 //boucle de lecture des messages
-console.log("connecté !!");
 irc.on('message', (channel, tags, message, self) => {
   if(self) return;
   //incrémente nombre de message seulement si en live
   if(isOnline == true){
     //ajouter message au compteur
-    sendMessageToDatabase(tags.username);
+    if(StreamID != null){
+      sendMessageToDatabase(tags.username);
+    }
   }
   //vérifie si dernier message provient de dollexbot
   if (tags.username === "dollexbot" && tags.mod === true) {
@@ -85,7 +87,6 @@ irc.on('message', (channel, tags, message, self) => {
       if(userList[(messageNumber-i-1)%userCache] !== "streamelements"){
         pointedIndex = (messageNumber-1-1)%userCache;
         var type = sendDollexbotToDatabase(message,pointed);
-        console.log(`pointed : ${pointed} est ${type}`);
         break;
       }
     }
@@ -98,7 +99,7 @@ async function isLive(){
   var second = 0;
   while(1){
     var date = new Date();
-  //vérifie tout les 5s si la chaine est en live
+  //vérifie tout les 15s si la chaine est en live
     if(date.getSeconds()%5 == 0 && second != date.getSeconds()){
       second = date.getSeconds();
       //demande à l'API les infos du stream
@@ -107,7 +108,7 @@ async function isLive(){
         //appeller fonction ajouter stream dans BD
         console.log("Stream ON !");
         StreamID = streams.data[0].id;
-        addStreamToDataBase(streams.data[0].title,streams.data[0].started_at);
+        addStreamToDataBase(streams.data[0].title);
         isOnline = true;
       }else if(streams.data.length = 0 && isOnline === true){
         //appeller fonction ajouter timestamp de fin de stream
@@ -129,7 +130,6 @@ function sendMessageToDatabase(viewer){
 function sendDollexbotToDatabase(message,username){
   //obtenir type + valeur
   var pieces = message.split(' ');
-  console.log(pieces);
   var type = pieces[1];
   switch(type){
     case "CEO":
@@ -143,19 +143,14 @@ function sendDollexbotToDatabase(message,username){
     break;
   }
   var sql = mysql.format("INSERT INTO dollexbot VALUES (?,CURRENT_TIME,?,?,?)", [StreamID,type,valeur,username]);
-  console.log(sql);
   database.query(sql, function (error, results) {
     if (error) throw error;
   });
   return type;
 }
 
-function addStreamToDataBase(streamName,startTimeStamp){
-  //change timestamp format
-  startTimeStamp = startTimeStamp.replace("T"," ");
-  startTimeStamp = startTimeStamp.replace("Z","");
-  console.log(startTimeStamp);
-  var sql = mysql.format("INSERT INTO streams VALUES (?,?,CURRENT_TIME,?)", [StreamID,startTimeStamp,streamName]);
+function addStreamToDataBase(streamName){
+  var sql = mysql.format("INSERT INTO streams VALUES (?,CURRENT_TIME,CURRENT_TIME,?)", [StreamID,startTimeStamp,streamName]);
   database.query(sql, function (error, results) {
     if (error) throw error;
   });
@@ -167,4 +162,3 @@ function setStreamEndTimeStamp(){
     if (error) throw error;
   });
 }
-
